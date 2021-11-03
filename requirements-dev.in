@@ -5,5 +5,6 @@ flake8
 ipdb
 ipython
 isort
+model-bakery
 pip-tools
 pre-commit
