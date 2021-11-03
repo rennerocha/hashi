@@ -29,7 +29,7 @@ class Entry(models.Model):
     type = models.PositiveSmallIntegerField(choices=EntryType.choices)
     account = models.ForeignKey(Account, null=True, on_delete=models.SET_NULL)
     description = models.CharField(max_length=128)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
