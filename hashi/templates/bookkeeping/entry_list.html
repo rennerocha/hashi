@@ -25,8 +25,14 @@
                 </span>
               </td>
               <td>{{ entry.description }}</td>
-              <td>{{ entry.account.name }}</td>
-              <td>{{ entry.tags.all|join:", " }}</td>
+              <td>
+                <span class="badge bg-danger">{{ entry.account.name }}</span>
+              </td>
+              <td>
+                {% for tag in entry.tags.all %}
+                  <span class="badge bg-success">{{ tag.name }}</span>
+                {% endfor %}
+              </td>
             </tr>
             {% empty %}
             <tr>
@@ -36,10 +42,16 @@
             <tr>
               <td></td>
               <td>
-                +{{ total_income }}<br>
-                -{{ total_expense }}
+                <span class="text-success">+{{ total_income }}</span><br/>
+                <span class="text-danger">-{{ total_expense }}</span>
               </td>
-              <td colspan="3">{{ balance }}</td>
+              <td colspan="3">
+                {% if balance < 0 %}
+                  <strong><span class="text-danger">{{ balance }}</span></strong>
+                {% else %}
+                  <strong><span class="text-success">{{ balance }}</span></strong>
+                {% endif %}
+              </td>
             </tr>
           </tbody>
         </table>
