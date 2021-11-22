@@ -22,5 +22,8 @@ def entry_list(request):
         "total_income": total_income,
         "total_expense": total_expense,
         "balance": total_income - total_expense,
+        "month": int(month),
+        "year": year,
+        "month_range": range(1, 13),
     }
     return render(request, "bookkeeping/entry_list.html", context=context)

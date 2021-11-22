@@ -92,3 +92,20 @@ class EntryList(TestCase):
         self.assertTrue(entry_1 in response.context["entries"])
         self.assertFalse(entry_2 in response.context["entries"])
         self.assertFalse(entry_3 in response.context["entries"])
+
+    def test_entry_list_with_default_month_and_year(self):
+        today = timezone.now().date()
+
+        response = self.client.get(reverse("bookkeeping:entry-list"))
+
+        self.assertEqual(response.context["month"], today.month)
+        self.assertEqual(response.context["year"], today.year)
+
+    def test_entry_list_with_provided_month_and_year(self):
+        url_params = {"month": "10", "year": "2021"}
+        entry_list_url = f'{reverse("bookkeeping:entry-list")}?{urlencode(url_params)}'
+
+        response = self.client.get(entry_list_url)
+
+        self.assertEqual(response.context["month"], "10")
+        self.assertEqual(response.context["year"], "2021")
