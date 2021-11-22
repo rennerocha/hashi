@@ -1,6 +1,9 @@
+import datetime
+
 from bookkeeping.models import EntryType
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from model_bakery import baker
 
 
@@ -27,6 +30,21 @@ class EntryList(TestCase):
         self.assertQuerysetEqual(
             response.context["entries"], [entry_1, entry_2], ordered=False
         )
+
+    def test_entry_list_with_entries_of_current_month_by_default(self):
+        this_month_date = timezone.now().date().replace(day=1)
+        last_month_date = this_month_date - datetime.timedelta(days=1)
+        next_month_date = (this_month_date + datetime.timedelta(days=32)).replace(day=1)
+
+        entry_1 = baker.make("bookkeeping.Entry", date=last_month_date)
+        entry_2 = baker.make("bookkeeping.Entry", date=this_month_date)
+        entry_3 = baker.make("bookkeeping.Entry", date=next_month_date)
+
+        response = self.client.get(reverse("bookkeeping:entry-list"))
+
+        self.assertFalse(entry_1 in response.context["entries"])
+        self.assertTrue(entry_2 in response.context["entries"])
+        self.assertFalse(entry_3 in response.context["entries"])
 
     def test_entry_list_with_total_income(self):
         baker.make("bookkeeping.Entry", value=500, type=EntryType.INCOME)
