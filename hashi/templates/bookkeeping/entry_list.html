@@ -1,44 +1,50 @@
 {% extends "base.html" %}
 
-{% block main %}
-
-<table>
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Value</th>
-      <th>Description</th>
-      <th>Account</th>
-      <th>Tags</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for entry in entries %}
-    <tr>
-      <td>{{ entry.date }}</td>
-      <td>
-        <span class="{{ entry.get_type_display|lower }}">
-          {% if entry.get_type_display == "EXPENSE" %}-{% endif %}{{ entry.value }}
-        </span>
-      </td>
-      <td>{{ entry.description }}</td>
-      <td>{{ entry.account.name }}</td>
-      <td>{{ entry.tags.all|join:", " }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="5">No entries found!</td>
-    </tr>
-    {% endfor %}
-    <tr>
-      <td></td>
-      <td>
-        +{{ total_income }}<br>
-        -{{ total_expense }}
-      </td>
-      <td>{{ balance }}</td>
-    </tr>
-  </tbody>
-</table>
-
+{% block content-main %}
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Value</th>
+              <th>Description</th>
+              <th>Account</th>
+              <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in entries %}
+            <tr>
+              <td>{{ entry.date }}</td>
+              <td>
+                <span class="{{ entry.get_type_display|lower }}">
+                  {% if entry.get_type_display == "EXPENSE" %}-{% endif %}{{ entry.value }}
+                </span>
+              </td>
+              <td>{{ entry.description }}</td>
+              <td>{{ entry.account.name }}</td>
+              <td>{{ entry.tags.all|join:", " }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5">No entries found!</td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td></td>
+              <td>
+                +{{ total_income }}<br>
+                -{{ total_expense }}
+              </td>
+              <td colspan="3">{{ balance }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</div>
 {% endblock %}
