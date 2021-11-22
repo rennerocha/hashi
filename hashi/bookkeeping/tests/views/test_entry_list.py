@@ -1,4 +1,5 @@
 import datetime
+from urllib.parse import urlencode
 
 from bookkeeping.models import EntryType
 from django.test import TestCase
@@ -73,3 +74,21 @@ class EntryList(TestCase):
         self.assertEqual(response.context["total_expense"], 200)
         self.assertEqual(response.context["total_income"], 1000)
         self.assertEqual(response.context["balance"], 800)
+
+    def test_entry_list_filter_by_year_and_month(self):
+        this_month_date = timezone.now().date().replace(day=1)
+        last_month_date = this_month_date - datetime.timedelta(days=1)
+        next_month_date = (this_month_date + datetime.timedelta(days=32)).replace(day=1)
+
+        entry_1 = baker.make("bookkeeping.Entry", date=last_month_date)
+        entry_2 = baker.make("bookkeeping.Entry", date=this_month_date)
+        entry_3 = baker.make("bookkeeping.Entry", date=next_month_date)
+
+        url_params = {"month": last_month_date.month, "year": last_month_date.year}
+        entry_list_url = f'{reverse("bookkeeping:entry-list")}?{urlencode(url_params)}'
+
+        response = self.client.get(entry_list_url)
+
+        self.assertTrue(entry_1 in response.context["entries"])
+        self.assertFalse(entry_2 in response.context["entries"])
+        self.assertFalse(entry_3 in response.context["entries"])

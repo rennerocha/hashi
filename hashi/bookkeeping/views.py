@@ -5,8 +5,10 @@ from django.utils import timezone
 
 
 def entry_list(request):
-    current_month = timezone.now().month
-    entries = Entry.objects.filter(date__month=current_month)
+    today = timezone.now()
+    month = request.GET.get("month") or today.month
+    year = request.GET.get("year") or today.year
+    entries = Entry.objects.filter(date__month=month, date__year=year)
 
     total_expense, total_income = 0, 0
     for entry in entries.values("type").annotate(total_value=Sum("value")):
