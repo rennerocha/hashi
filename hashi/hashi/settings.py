@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from decouple import config
+from dj_database_url import parse as db_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,12 +53,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "hashi.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+DATABASES = {"default": config("DATABASE_URL", cast=db_url)}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
