@@ -8,7 +8,9 @@ def entry_list(request):
     today = timezone.now()
     month = request.GET.get("month") or today.month
     year = request.GET.get("year") or today.year
-    entries = Entry.objects.filter(date__month=month, date__year=year)
+    entries = Entry.objects.exclude(type=EntryType.TRANSFER).filter(
+        date__month=month, date__year=year
+    )
 
     total_expense, total_income = 0, 0
     for entry in entries.values("type").annotate(total_value=Sum("value")):

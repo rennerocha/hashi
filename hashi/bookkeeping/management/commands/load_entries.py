@@ -34,13 +34,14 @@ class Command(BaseCommand):
 
             Account.objects.get_or_create(name=account_name)
 
-            if value >= 0:
+            tags = tags.split(",")
+            if "transferencia" in tags:
+                type_ = EntryType.TRANSFER
+            elif value >= 0:
                 type_ = EntryType.INCOME
             else:
                 type_ = EntryType.EXPENSE
                 value = -1 * value
-
-            tags = tags.split(",")
 
             new_entry(date, value, type_, description, account_name, tags=tags)
 

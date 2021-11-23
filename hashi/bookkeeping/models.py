@@ -4,6 +4,7 @@ from django.db import models
 class EntryType(models.IntegerChoices):
     INCOME = 1, "INCOME"
     EXPENSE = 2, "EXPENSE"
+    TRANSFER = 3, "TRANSFER"  # Value transfer between accounts
 
 
 class Account(models.Model):

@@ -23,8 +23,8 @@ class EntryList(TestCase):
         self.assertQuerysetEqual(response.context["entries"], [])
 
     def test_entry_list_with_entries(self):
-        entry_1 = baker.make("bookkeeping.Entry")
-        entry_2 = baker.make("bookkeeping.Entry")
+        entry_1 = baker.make("bookkeeping.Entry", type=EntryType.INCOME)
+        entry_2 = baker.make("bookkeeping.Entry", type=EntryType.INCOME)
 
         response = self.client.get(reverse("bookkeeping:entry-list"))
 
@@ -37,9 +37,15 @@ class EntryList(TestCase):
         last_month_date = this_month_date - datetime.timedelta(days=1)
         next_month_date = (this_month_date + datetime.timedelta(days=32)).replace(day=1)
 
-        entry_1 = baker.make("bookkeeping.Entry", date=last_month_date)
-        entry_2 = baker.make("bookkeeping.Entry", date=this_month_date)
-        entry_3 = baker.make("bookkeeping.Entry", date=next_month_date)
+        entry_1 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=last_month_date
+        )
+        entry_2 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=this_month_date
+        )
+        entry_3 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=next_month_date
+        )
 
         response = self.client.get(reverse("bookkeeping:entry-list"))
 
@@ -80,9 +86,15 @@ class EntryList(TestCase):
         last_month_date = this_month_date - datetime.timedelta(days=1)
         next_month_date = (this_month_date + datetime.timedelta(days=32)).replace(day=1)
 
-        entry_1 = baker.make("bookkeeping.Entry", date=last_month_date)
-        entry_2 = baker.make("bookkeeping.Entry", date=this_month_date)
-        entry_3 = baker.make("bookkeeping.Entry", date=next_month_date)
+        entry_1 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=last_month_date
+        )
+        entry_2 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=this_month_date
+        )
+        entry_3 = baker.make(
+            "bookkeeping.Entry", type=EntryType.INCOME, date=next_month_date
+        )
 
         url_params = {"month": last_month_date.month, "year": last_month_date.year}
         entry_list_url = f'{reverse("bookkeeping:entry-list")}?{urlencode(url_params)}'
@@ -107,5 +119,27 @@ class EntryList(TestCase):
 
         response = self.client.get(entry_list_url)
 
-        self.assertEqual(response.context["month"], "10")
+        self.assertEqual(response.context["month"], 10)
         self.assertEqual(response.context["year"], "2021")
+
+    def test_do_not_consider_transfers_in_balance(self):
+        baker.make("bookkeeping.Entry", value=100, type=EntryType.TRANSFER)
+        baker.make("bookkeeping.Entry", value=200, type=EntryType.EXPENSE)
+        baker.make("bookkeeping.Entry", value=300, type=EntryType.INCOME)
+
+        response = self.client.get(reverse("bookkeeping:entry-list"))
+
+        self.assertEqual(response.context["total_expense"], 200)
+        self.assertEqual(response.context["total_income"], 300)
+        self.assertEqual(response.context["balance"], 100)
+
+    def test_do_not_return_transfers_in_entry_list(self):
+        entry_1 = baker.make("bookkeeping.Entry", value=100, type=EntryType.TRANSFER)
+        entry_2 = baker.make("bookkeeping.Entry", value=200, type=EntryType.EXPENSE)
+        entry_3 = baker.make("bookkeeping.Entry", value=300, type=EntryType.INCOME)
+
+        response = self.client.get(reverse("bookkeeping:entry-list"))
+
+        self.assertFalse(entry_1 in response.context["entries"])
+        self.assertTrue(entry_2 in response.context["entries"])
+        self.assertTrue(entry_3 in response.context["entries"])
