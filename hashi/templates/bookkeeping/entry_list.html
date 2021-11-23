@@ -31,6 +31,20 @@
         <table class="table table-hover">
           <thead>
             <tr>
+              <td></td>
+              <td>
+                <span class="text-success">+{{ total_income|floatformat:2 }}</span><br/>
+                <span class="text-danger">-{{ total_expense|floatformat:2 }}</span>
+              </td>
+              <td colspan="3">
+                {% if balance < 0 %}
+                  <strong><span class="text-danger">{{ balance|floatformat:2 }}</span></strong>
+                {% else %}
+                  <strong><span class="text-success">{{ balance|floatformat:2 }}</span></strong>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
               <th>Date</th>
               <th>Value</th>
               <th>Description</th>
@@ -65,14 +79,14 @@
             <tr>
               <td></td>
               <td>
-                <span class="text-success">+{{ total_income }}</span><br/>
-                <span class="text-danger">-{{ total_expense }}</span>
+                <span class="text-success">+{{ total_income|floatformat:2 }}</span><br/>
+                <span class="text-danger">-{{ total_expense|floatformat:2 }}</span>
               </td>
               <td colspan="3">
                 {% if balance < 0 %}
-                  <strong><span class="text-danger">{{ balance }}</span></strong>
+                  <strong><span class="text-danger">{{ balance|floatformat:2 }}</span></strong>
                 {% else %}
-                  <strong><span class="text-success">{{ balance }}</span></strong>
+                  <strong><span class="text-success">{{ balance|floatformat:2 }}</span></strong>
                 {% endif %}
               </td>
             </tr>
