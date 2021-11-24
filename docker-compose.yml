@@ -1,0 +1,40 @@
+version: "3.3"
+
+services:
+  hashi-app:
+    build: .
+    container_name: hashi-app
+    restart: always
+    volumes:
+      - hashi_static_data:/hashi/static
+    expose:
+      - "8182"
+    ports:
+      - "8182:80"
+    env_file:
+      - .hashi.app.env
+    command: "/app/entrypoint.sh"
+    networks:
+      - nginx-proxy
+
+  hashi-app-static:
+    image: nginx:latest
+    container_name: hashi-app-static
+    restart: always
+    volumes:
+      - hashi_static_data:/usr/share/nginx/html
+    env_file:
+      - .hashi.app.static.env
+    depends_on:
+      - hashi-app
+    expose:
+      - "80"
+    networks:
+      - nginx-proxy
+
+volumes:
+  hashi_static_data:
+
+networks:
+  nginx-proxy:
+    external: true

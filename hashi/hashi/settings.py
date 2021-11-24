@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from decouple import config
+from decouple import Csv, config
 from dj_database_url import parse as db_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +9,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1", cast=Csv())
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -80,6 +80,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = "/static/"
+STATIC_ROOT = config("STATIC_ROOT", default="static/")
+
+STATIC_URL = config("STATIC_URL", default="/static/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
