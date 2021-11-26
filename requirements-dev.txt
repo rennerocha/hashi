@@ -18,12 +18,18 @@ cfgv==3.3.1
     # via pre-commit
 click==8.0.3
     # via
+    #   -r requirements.txt
     #   black
     #   pip-tools
+    #   rq
 decorator==5.1.0
     # via
     #   ipdb
     #   ipython
+deprecated==1.2.13
+    # via
+    #   -r requirements.txt
+    #   redis
 distlib==0.3.3
     # via virtualenv
 dj-database-url==0.5.0
@@ -31,7 +37,10 @@ dj-database-url==0.5.0
 django==3.2.9
     # via
     #   -r requirements.txt
+    #   django-rq
     #   model-bakery
+django-rq==2.5.1
+    # via -r requirements.txt
 filelock==3.4.0
     # via virtualenv
 flake8==4.0.1
@@ -98,8 +107,17 @@ pytz==2021.3
     #   django
 pyyaml==6.0
     # via pre-commit
+redis==4.0.2
+    # via
+    #   -r requirements.txt
+    #   django-rq
+    #   rq
 regex==2021.11.10
     # via black
+rq==1.10.0
+    # via
+    #   -r requirements.txt
+    #   django-rq
 six==1.16.0
     # via virtualenv
 sqlparse==0.4.2
@@ -126,6 +144,10 @@ wcwidth==0.2.5
     # via prompt-toolkit
 wheel==0.37.0
     # via pip-tools
+wrapt==1.13.3
+    # via
+    #   -r requirements.txt
+    #   deprecated
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
