@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_rq",
     "bookkeeping",
 ]
 
@@ -85,3 +86,13 @@ STATIC_ROOT = config("STATIC_ROOT", default="static/")
 STATIC_URL = config("STATIC_URL", default="/static/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+RQ_QUEUES = {
+    "default": {
+        "HOST": config("RQ_QUEUES_HOST"),
+        "PORT": config("RQ_QUEUES_PORT", default=6379, cast=int),
+        "DB": 0,
+        # "PASSWORD": config("RQ_QUEUES_PASSWORD"),
+        "DEFAULT_TIMEOUT": config("RQ_QUEUES_DEFAULT_TIMEOUT", default=360, cast=int),
+    },
+}

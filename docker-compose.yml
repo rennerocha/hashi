@@ -10,7 +10,7 @@ services:
     expose:
       - "8182"
     ports:
-      - "8182:80"
+      - "8182:8182"
     env_file:
       - .hashi.app.env
     command: "/app/entrypoint.sh"
@@ -32,8 +32,21 @@ services:
     networks:
       - nginx-proxy
 
+  hashi-redis:
+    image: redis:latest
+    container_name: hashi-redis
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - nginx-proxy
+
 volumes:
   hashi_static_data:
+  redis_data:
+    driver: local
 
 networks:
   nginx-proxy:
