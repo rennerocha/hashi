@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.test import TestCase
 from django.urls import reverse
 from webhooks.models import GatewayType, Notification, NotificationStatus
@@ -7,24 +9,45 @@ VALID_IPN_NOTIFICATION = "transaction_subject=Transaction Title&payment_date=03:
 
 class PaypalWebhook(TestCase):
     def test_receive_ipn_notification(self):
-        response = self.client.post(
-            reverse("webhooks:paypal-listener"),
-            content_type="application/x-www-form-urlencoded",
-            data=VALID_IPN_NOTIFICATION,
-        )
-        self.assertEqual(response.status_code, 200)
+        with mock.patch("webhooks.views.paypal_handshake.delay"):
+            response = self.client.post(
+                reverse("webhooks:paypal-listener"),
+                content_type="application/x-www-form-urlencoded",
+                data=VALID_IPN_NOTIFICATION,
+            )
+            self.assertEqual(response.status_code, 200)
 
     def test_received_ipn_notification_stored_as_received(self):
-        self.client.post(
-            reverse("webhooks:paypal-listener"),
-            content_type="application/x-www-form-urlencoded",
-            data=VALID_IPN_NOTIFICATION,
-        )
+        with mock.patch("webhooks.views.paypal_handshake.delay"):
+            self.client.post(
+                reverse("webhooks:paypal-listener"),
+                content_type="application/x-www-form-urlencoded",
+                data=VALID_IPN_NOTIFICATION,
+            )
 
-        self.assertTrue(
-            Notification.objects.filter(
+            self.assertTrue(
+                Notification.objects.filter(
+                    gateway=GatewayType.PAYPAL,
+                    raw_notification=VALID_IPN_NOTIFICATION,
+                    status=NotificationStatus.RECEIVED,
+                ).exists()
+            )
+
+    def test_received_ipn_notification_trigger_paypal_handshake(self):
+        with mock.patch(
+            "webhooks.views.paypal_handshake.delay"
+        ) as mock_paypal_handshake:
+            response = self.client.post(
+                reverse("webhooks:paypal-listener"),
+                content_type="application/x-www-form-urlencoded",
+                data=VALID_IPN_NOTIFICATION,
+            )
+            notification = Notification.objects.filter(
                 gateway=GatewayType.PAYPAL,
                 raw_notification=VALID_IPN_NOTIFICATION,
                 status=NotificationStatus.RECEIVED,
-            ).exists()
-        )
+            ).first()
+
+            mock_paypal_handshake.assert_called_with(
+                response.wsgi_request, notification
+            )
