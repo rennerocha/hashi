@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_rq",
     "bookkeeping",
+    "webhooks",
 ]
 
 MIDDLEWARE = [
