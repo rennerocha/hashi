@@ -1,26 +1,27 @@
 version: "3.3"
 
 services:
-  hashi-app:
+  hashi-app: &hashi-app
     build: .
     container_name: hashi-app
-    restart: always
+    restart: "no"
     volumes:
       - hashi_static_data:/hashi/static
-    expose:
-      - "8182"
-    ports:
-      - "8182:8182"
     env_file:
       - .hashi.app.env
     command: "/app/entrypoint.sh"
     networks:
       - nginx-proxy
 
+  hashi-rqworker:
+    <<: *hashi-app
+    container_name: hashi-rqworker
+    command: /app/rqworker.entrypoint.sh
+
   hashi-app-static:
     image: nginx:latest
     container_name: hashi-app-static
-    restart: always
+    restart: "no"
     volumes:
       - hashi_static_data:/usr/share/nginx/html
     env_file:
@@ -35,7 +36,7 @@ services:
   hashi-redis:
     image: redis:latest
     container_name: hashi-redis
-    restart: always
+    restart: "no"
     expose:
       - "6379"
     volumes:

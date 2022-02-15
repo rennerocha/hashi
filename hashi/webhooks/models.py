@@ -7,6 +7,8 @@ class GatewayType(models.IntegerChoices):
 
 class NotificationStatus(models.IntegerChoices):
     RECEIVED = 1, "RECEIVED"
+    VERIFIED = 2, "VERIFIED"
+    INVALID = 3, "INVALID"
 
 
 class Notification(models.Model):

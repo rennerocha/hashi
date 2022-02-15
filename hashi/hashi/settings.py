@@ -97,3 +97,5 @@ RQ_QUEUES = {
         "DEFAULT_TIMEOUT": config("RQ_QUEUES_DEFAULT_TIMEOUT", default=360, cast=int),
     },
 }
+
+PAYPAL_URL = config("PAYPAL_URL", default="https://sandbox.paypal.com/")
