@@ -4,4 +4,5 @@ django-rq
 gunicorn
 psycopg2-binary
 python-decouple
+requests
 whitenoise[brotli]

@@ -11,7 +11,7 @@ class PaypalWebhook(TestCase):
     def test_receive_ipn_notification(self):
         with mock.patch("webhooks.views.paypal_handshake.delay"):
             response = self.client.post(
-                reverse("webhooks:paypal-listener"),
+                reverse("webhooks:paypal-ipn-listener"),
                 content_type="application/x-www-form-urlencoded",
                 data=VALID_IPN_NOTIFICATION,
             )
@@ -20,7 +20,7 @@ class PaypalWebhook(TestCase):
     def test_received_ipn_notification_stored_as_received(self):
         with mock.patch("webhooks.views.paypal_handshake.delay"):
             self.client.post(
-                reverse("webhooks:paypal-listener"),
+                reverse("webhooks:paypal-ipn-listener"),
                 content_type="application/x-www-form-urlencoded",
                 data=VALID_IPN_NOTIFICATION,
             )
@@ -38,7 +38,7 @@ class PaypalWebhook(TestCase):
             "webhooks.views.paypal_handshake.delay"
         ) as mock_paypal_handshake:
             response = self.client.post(
-                reverse("webhooks:paypal-listener"),
+                reverse("webhooks:paypal-ipn-listener"),
                 content_type="application/x-www-form-urlencoded",
                 data=VALID_IPN_NOTIFICATION,
             )
