@@ -5,7 +5,7 @@ from webhooks.models import NotificationStatus
 
 
 @job
-def paypal_handshake(request, notification):
+def paypal_handshake(notification):
     """
     PayPal IPN Listener flow is documented at:
     https://developer.paypal.com/api/nvp-soap/ipn/IPNIntro/

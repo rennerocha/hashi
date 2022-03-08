@@ -10,7 +10,5 @@ def paypal_listener(request):
     notification = Notification.objects.create(
         gateway=GatewayType.PAYPAL, raw_notification=raw_notification
     )
-
-    paypal_handshake.delay(request, notification)
-
+    paypal_handshake.delay(notification)
     return HttpResponse("")

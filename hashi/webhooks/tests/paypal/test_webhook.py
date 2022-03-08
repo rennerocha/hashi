@@ -37,7 +37,7 @@ class PaypalWebhook(TestCase):
         with mock.patch(
             "webhooks.views.paypal_handshake.delay"
         ) as mock_paypal_handshake:
-            response = self.client.post(
+            self.client.post(
                 reverse("webhooks:paypal-ipn-listener"),
                 content_type="application/x-www-form-urlencoded",
                 data=VALID_IPN_NOTIFICATION,
@@ -48,6 +48,4 @@ class PaypalWebhook(TestCase):
                 status=NotificationStatus.RECEIVED,
             ).first()
 
-            mock_paypal_handshake.assert_called_with(
-                response.wsgi_request, notification
-            )
+            mock_paypal_handshake.assert_called_with(notification)
