@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs
+
 import requests
 from django.conf import settings
 from django_rq import job
@@ -15,9 +17,11 @@ def paypal_handshake(notification):
         "Host": "www.paypal.com",
     }
     data = f"cmd=_notify-validate&{notification.raw_notification}"
+
+    parsed_data = parse_qs(data)
     validation_response = requests.post(
         settings.PAYPAL_URL,
-        data=data,
+        data=parsed_data,
         headers=headers,
         verify=True,
     )

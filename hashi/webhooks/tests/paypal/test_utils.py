@@ -1,4 +1,5 @@
 from unittest import mock
+from urllib.parse import parse_qs
 
 from django.conf import settings
 from django.test import RequestFactory, TestCase
@@ -50,9 +51,12 @@ class PaypalHandshake(TestCase):
             )
             paypal_handshake(notification)
 
+            parsed_data = parse_qs(
+                f"cmd=_notify-validate&{notification.raw_notification}"
+            )
             mock_requests.assert_called_with(
                 settings.PAYPAL_URL,
-                data=f"cmd=_notify-validate&{notification.raw_notification}",
+                data=parsed_data,
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Host": "www.paypal.com",
